@@ -22,9 +22,9 @@ store.patch(subject, { unset: [title] });
 
 `apply([{ subject, patch }, ...])` validates and applies related resource changes as a local transaction. A validation failure leaves all resources untouched. `transaction(callback)` groups synchronous store and identity operations with rollback; the callback must not be async or launch asynchronous work.
 
-`AtomicSchema` is an offline property catalog. Define every property before importing data; unknown properties are rejected. It uses `@tomic/lib` datatype validation, with additional primitive, finite-number and link checks. This release supports the SDK's string, markdown, slug, boolean, integer, float, date, timestamp, atomicURL and resourceArray types. Links may be HTTP(S) URLs or nested resources with property URL keys and no `@id`. Named resources are permitted at the JSON-AD document root or in its root array.
+`AtomicSchema` is an offline property catalog. Define every property before importing data; unknown properties are rejected. It uses `@tomic/lib` datatype validation, with additional primitive, finite-number and link checks. This release supports the SDK's string, markdown, slug, boolean, integer, float, date, timestamp, atomicURL and resourceArray types. Links may be HTTP(S) URLs or DID identifiers or nested resources with property URL keys and no `@id`. Named resources are permitted at the JSON-AD document root or in its root array.
 
-This is a deliberately bounded JSON-AD profile: HTTP(S) subjects, explicitly registered datatypes, no arbitrary JSON or Yjs datatypes, no automatic remote schema resolution, and no required-property/class-constraint validation. Application lenses must check required fields. Publish your property's Atomic Schema definitions at their URLs for interoperability; declaring a local catalog does not publish them. The example.com vocabulary in examples is illustrative.
+This is a deliberately bounded JSON-AD profile: HTTP(S) or DID subjects, explicitly registered datatypes, no arbitrary JSON or Yjs datatypes, no automatic remote schema resolution, and no required-property/class-constraint validation. Application lenses must check required fields. Publish your property's Atomic Schema definitions at their URLs for interoperability; declaring a local catalog does not publish them. The example.com vocabulary in examples is illustrative.
 
 ## External identities
 
@@ -105,3 +105,5 @@ There are no revision clocks, stale-event rejection, cross-system conflict resol
 The behavioral tests cover distinct identical records, scoped identities, round-trip snapshots, malformed input rollback, linked entity extraction, reverse updates, field preservation/removal, replay, queued creates, lost responses and deletion failures.
 
 Specification references: [JSON-AD](https://docs.atomicdata.dev/core/json-ad.html), [Atomic Schema](https://docs.atomicdata.dev/schema/intro.html), [Atomic Commits](https://docs.atomicdata.dev/commits/intro.html), [TypeScript SDK](https://atomicdata-dev.github.io/atomic-data-browser/docs/modules/_tomic_lib.html).
+
+DID identifiers (including AtomicServer `did:ad:` base64 identities) are accepted as resource subjects, property keys, classes, links and connector scopes. Identifiers are preserved exactly; validation does not resolve DIDs or verify signatures. Identity allocator bases still require HTTP(S) URLs because the allocator appends child paths. Bind existing DID resources explicitly before ingesting their external records.
