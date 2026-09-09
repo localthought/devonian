@@ -9,6 +9,12 @@ Inspired by [the Cambria Project](https://github.com/inkandswitch/cambria-projec
 
 *Identifier Maps are the Vector Clocks of Data Portability.*
 
+## Native Atomic Data API
+
+New integrations can use `AtomicStore`, `AtomicIdentityMap`, and `AtomicLens` with Atomic Data resources as their native format. Resources use subject URLs and typed property URLs; platform JSON stays in connector transformations. JSON-AD snapshots include scoped external identity mappings. The awaitable lens supports creation, updates and deletion, with explicit field removal and no automatic write-back on import.
+
+See the [Atomic Data guide](docs/atomic-data.md) for the API, supported JSON-AD profile, persistence, connector contracts, and limitations. The [Atomic Extract Entity example](examples/AtomicExtractEntity.ts) maps flattened orders to linked Order and Customer resources. The original row API remains available; existing applications are not automatically migrated. Signed Atomic Commits and live Atomic Server transport are follow-up work.
+
 ## Local Identifiers and IdMaps
 What I think none of the other lens projects are currently offering is a built-in way to deal with the mapping of local identifiers.
 
@@ -35,7 +41,7 @@ I think Lens VM also has a concept of foreign IDs and id maps, but I think it is
 
 For instance in a bank account statement, if I transfer 100 euros from my savings account to my current account, and then do the same again on the same day, some CSV export formats will meaningfully represent this as two identical rows in the CSV file (date, amount, from, to), and refering to these rows by content ID would incorrectly collapse them into a single row.
 
-## How it works
+## How the legacy row API works
 The core is in DevonianLens which is very simple: it links corresponding database tables on different systems of record (e.g. bridging a Slack channel with a Matrix room, copying over messages from one to the other), and calls a 'left to right' translation function when a change happens on the left, then add the result on the right. So far only additions have been implemented; updates and deletions coming soon. Here is an implementation of the ['Extract Entity' challenge](https://arxiv.org/pdf/2309.11406):
 ```ts
 new DevonianLens<AcmeComprehensiveOrderWithoutId, AcmeLinkedOrderWithoutId, AcmeComprehensiveOrder, AcmeLinkedOrder>(

@@ -1,0 +1,9 @@
+{
+  "@id": "https://raw.githubusercontent.com/localthought/devonian/main/vocab/resource.json",
+  "https://atomicdata.dev/properties/isA": [
+    "https://atomicdata.dev/classes/Property"
+  ],
+  "https://atomicdata.dev/properties/shortname": "resource",
+  "https://atomicdata.dev/properties/datatype": "https://atomicdata.dev/datatypes/atomicURL",
+  "https://atomicdata.dev/properties/description": "Native resource corresponding to this external identity."
+}

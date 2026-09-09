@@ -1,0 +1,15 @@
+{
+  "@id": "https://raw.githubusercontent.com/localthought/devonian/main/vocab/Identity.json",
+  "https://atomicdata.dev/properties/isA": [
+    "https://atomicdata.dev/classes/Class"
+  ],
+  "https://atomicdata.dev/properties/shortname": "devonianIdentity",
+  "https://atomicdata.dev/properties/description": "A scoped external identifier mapped to a native Atomic Data resource.",
+  "https://atomicdata.dev/properties/requires": [
+    "https://raw.githubusercontent.com/localthought/devonian/main/vocab/scope.json",
+    "https://raw.githubusercontent.com/localthought/devonian/main/vocab/entity.json",
+    "https://raw.githubusercontent.com/localthought/devonian/main/vocab/localId.json",
+    "https://raw.githubusercontent.com/localthought/devonian/main/vocab/idType.json",
+    "https://raw.githubusercontent.com/localthought/devonian/main/vocab/resource.json"
+  ]
+}

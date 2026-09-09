@@ -13,7 +13,10 @@ describe('set, get, findObject', () => {
     storage: new NodeFSStorageAdapter('./data'),
   });
   const docHandle = repo.create<ModelWithoutId[]>();
-  const storage = new IndexedStorage<ModelWithoutId>('storage-id', new AutomergeStorage<ModelWithoutId>(docHandle));
+  const storage = new IndexedStorage<ModelWithoutId>(
+    'storage-id',
+    new AutomergeStorage<ModelWithoutId>(docHandle),
+  );
 
   it('can store rows', async () => {
     // console.log('1');
@@ -35,33 +38,38 @@ describe('upsert', () => {
       storage: new NodeFSStorageAdapter('./data'),
     });
     const docHandle = repo.create<AcmeCustomerWithoutId[]>();
-    const storage = new IndexedStorage<AcmeCustomerWithoutId>('storage-id', new AutomergeStorage<AcmeCustomerWithoutId>(docHandle));
+    const storage = new IndexedStorage<AcmeCustomerWithoutId>(
+      'storage-id',
+      new AutomergeStorage<AcmeCustomerWithoutId>(docHandle),
+    );
     const wile = {
       name: 'Wile E Coyote',
       address: '123 Desert Station',
-      foreignIds: { }
+      foreignIds: {},
     };
     const daffy = {
       name: 'Daffy Duck',
       address: 'White Rock Lake',
-      foreignIds: { 'devonian-test-instance': 1 }
+      foreignIds: { 'devonian-test-instance': 1 },
     };
     const positions = await Promise.all([
-      storage.ensureRow(wile, [ 'foreignIds' ]),
-      storage.ensureRow(daffy, [ 'foreignIds' ]),
-       storage.ensureRow(wile, [ 'foreignIds' ]),
+      storage.ensureRow(wile, ['foreignIds']),
+      storage.ensureRow(daffy, ['foreignIds']),
+      storage.ensureRow(wile, ['foreignIds']),
     ]);
-    expect(positions).toEqual([{
-      "minted": true,
-      "position": 0,
-    },
-    {
-      "minted": true,
-      "position": 1,
-    },
-    {
-      "minted": false,
-      "position": 0,
-    }]);
+    expect(positions).toEqual([
+      {
+        minted: true,
+        position: 0,
+      },
+      {
+        minted: true,
+        position: 1,
+      },
+      {
+        minted: false,
+        position: 0,
+      },
+    ]);
   });
 });
