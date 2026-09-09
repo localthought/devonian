@@ -4,3 +4,7 @@ export * from './DevonianLens.js';
 export * from './DevonianModel.js';
 export * from './DevonianTable.js';
 export * from './IdentifierMap.js';
+export * from './atomic/Resource.js';
+export * from './atomic/Store.js';
+export * from './atomic/IdentityMap.js';
+export * from './atomic/Lens.js';

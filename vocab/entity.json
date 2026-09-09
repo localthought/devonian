@@ -1,0 +1,9 @@
+{
+  "@id": "https://raw.githubusercontent.com/localthought/devonian/main/vocab/entity.json",
+  "https://atomicdata.dev/properties/isA": [
+    "https://atomicdata.dev/classes/Property"
+  ],
+  "https://atomicdata.dev/properties/shortname": "entity",
+  "https://atomicdata.dev/properties/datatype": "https://atomicdata.dev/datatypes/string",
+  "https://atomicdata.dev/properties/description": "Entity type within the external scope."
+}
