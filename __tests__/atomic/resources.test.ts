@@ -44,7 +44,9 @@ describe('AtomicStore', () => {
     original[link][name] = 'mutated';
     const copy = store.get(a)!;
     (copy[link] as Record<string, string>)[name] = 'also mutated';
-    const [parsed] = new JSONADParser().parseArray(JSON.parse(store.toJSONAD()));
+    const [parsed] = new JSONADParser().parseArray(
+      JSON.parse(store.toJSONAD()),
+    );
     expect(parsed).toHaveLength(1);
     const restored = setup();
     restored.loadJSONAD(store.toJSONAD());
@@ -141,5 +143,51 @@ describe('AtomicIdentityMap', () => {
     expect(() => ids.bind(scope, 2, a)).toThrow('Conflicting');
     expect(() => ids.bind(scope, Number.MAX_SAFE_INTEGER + 1, b)).toThrow();
     expect(() => ids.bind(scope, '', b)).toThrow();
+  });
+});
+
+describe('DID resources', () => {
+  const subject = 'did:ad:abc/def+ghi==';
+  const property = 'did:ad:property';
+  const classId = 'did:ad:class';
+  const scope = { scope: 'did:ad:agent:abc+def=', entity: 'event' };
+  const create = (): AtomicStore =>
+    new AtomicStore(new AtomicSchema().property(property, Datatype.ATOMIC_URL));
+
+  it('preserves DID subjects, property keys, classes, links and identity mappings across restart', () => {
+    const store = create();
+    const ids = new AtomicIdentityMap(store, 'https://example.com/bridge');
+    store.put({ '@id': subject, [property]: scope.scope, [IS_A]: [classId] });
+    ids.bind(scope, 'event-1', subject);
+    const restored = create();
+    const restoredIds = new AtomicIdentityMap(
+      restored,
+      'https://example.com/bridge',
+    );
+    restored.loadJSONAD(store.toJSONAD());
+    expect(restored.all(classId)[0]['@id']).toBe(subject);
+    expect(restoredIds.subjectFor(scope, 'event-1')).toBe(subject);
+    expect(restoredIds.externalId(scope, subject)).toBe('event-1');
+    restored.patch(subject, { set: { [property]: 'did:key:z6MkExample' } });
+    expect(restored.get(subject)?.[property]).toBe('did:key:z6MkExample');
+    restored.patch(subject, { unset: [property] });
+    expect(restored.get(subject)?.[property]).toBeUndefined();
+  });
+
+  it.each([
+    'did:',
+    'did:ad:',
+    'did::abc',
+    'did:AD:abc',
+    'did:ad:has space',
+    'did:ad:%ZZ',
+    'javascript:alert(1)',
+    'file:///tmp/resource',
+  ])('rejects invalid subject %s', (id) => {
+    expect(() => create().put({ '@id': id })).toThrow();
+  });
+
+  it('requires an HTTP(S) allocator base even when resources use DIDs', () => {
+    expect(() => new AtomicIdentityMap(create(), subject)).toThrow('HTTP(S)');
   });
 });

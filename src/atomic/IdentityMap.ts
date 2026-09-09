@@ -27,6 +27,8 @@ export class AtomicIdentityMap {
   ) {
     assertSubject(baseURL);
     const url = new URL(baseURL);
+    if (!['http:', 'https:'].includes(url.protocol))
+      throw new Error('Identity base must be an HTTP(S) URL');
     if (url.search || url.hash)
       throw new Error('Identity base URL cannot contain a query or fragment');
     this.base = baseURL.replace(/\/$/, '');

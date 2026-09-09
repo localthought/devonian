@@ -17,14 +17,29 @@ export interface AtomicPatch {
 }
 export const IS_A = 'https://atomicdata.dev/properties/isA';
 
-/** Require absolute HTTP(S) URLs for this implementation's resource profile. */
+/** Accept HTTP(S) and DID identifiers without normalizing identity strings.
+ * Atomic's did:ad profile includes base64 (+, /, =) identifiers. This is
+ * syntactic validation only, not DID resolution or signature verification.
+ */
 export function assertSubject(value: string): void {
-  if (typeof value !== 'string' || /\s/.test(value))
-    throw new Error('Expected an absolute URL without whitespace');
+  if (
+    typeof value !== 'string' ||
+    /\s/.test(value) ||
+    [...value].some((c) => c.charCodeAt(0) < 32 || c.charCodeAt(0) === 127)
+  )
+    throw new Error(
+      'Expected an absolute identifier without whitespace or controls',
+    );
   const url = new URL(value);
-  if (!['http:', 'https:'].includes(url.protocol)) {
-    throw new Error(`Expected an HTTP(S) URL: ${value}`);
-  }
+  if (['http:', 'https:'].includes(url.protocol)) return;
+  if (
+    /^did:[a-z0-9]+:[A-Za-z0-9._:%+/=-]+(?:[?#][A-Za-z0-9._~:/?#[\]@!$&'()*+,;=%-]*)?$/.test(
+      value,
+    ) &&
+    !/%(?![0-9a-fA-F]{2})/.test(value)
+  )
+    return;
+  throw new Error(`Expected an HTTP(S) URL or DID: ${value}`);
 }
 
 /** Offline property catalog. Callers supply definitions rather than fetching schemas. */

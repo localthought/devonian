@@ -109,3 +109,4 @@ git push --tags
 pnpm build:release
 pnpm publish
 ```
+The native resource API accepts HTTP(S) and DID identities, including AtomicServer `did:ad:` resources, properties and links. Identity allocation still uses an HTTP(S) base; bind existing DID resources explicitly. See [Atomic Data API](docs/atomic-data.md).

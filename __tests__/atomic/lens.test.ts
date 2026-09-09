@@ -185,3 +185,36 @@ describe('Atomic Extract Entity lens', () => {
     expect(connector.delete).toHaveBeenCalledTimes(2);
   });
 });
+
+it('ingests and republishes an explicitly bound DID after restart without duplication', async () => {
+  const first = setup();
+  const subject = 'did:ad:existing/resource+signature==';
+  const scope = { scope: 'did:ad:agent:account=', entity: 'event' };
+  const makeLens = (state: ReturnType<typeof setup>): AtomicLens<FlatOrder> =>
+    new AtomicLens({
+      store: state.store,
+      identities: state.ids,
+      connector: state.connector,
+      ...scope,
+      read: (record: FlatOrder): { set: Record<string, number> } => ({
+        set: { [v.quantity]: record.quantity },
+      }),
+      write: (resource, previous): FlatOrder => ({
+        ...previous!,
+        quantity: resource[v.quantity] as number,
+      }),
+    });
+  first.ids.bind(scope, input.id, subject);
+  await makeLens(first).ingest(input);
+  const restored = setup(first.store.toJSONAD());
+  restored.records.set(input.id, input);
+  const lens = makeLens(restored);
+  expect(await lens.ingest(input)).toBe(subject);
+  restored.store.patch(subject, { set: { [v.quantity]: 4 } });
+  await lens.publish(subject);
+  expect(restored.connector.create).not.toHaveBeenCalled();
+  expect(restored.records.get(input.id)?.quantity).toBe(4);
+  expect(restored.store.all().filter((r) => r['@id'] === subject)).toHaveLength(
+    1,
+  );
+});
