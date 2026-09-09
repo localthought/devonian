@@ -1,4 +1,4 @@
-import { AtomicPatch, AtomicResource } from './Resource.js';
+import { AtomicPatch, AtomicResource, assertSubject } from './Resource.js';
 import { AtomicStore } from './Store.js';
 import { AtomicIdentityMap, ExternalId, IdentityScope } from './IdentityMap.js';
 
@@ -35,7 +35,13 @@ export interface AtomicLensOptions<External> extends IdentityScope {
 /** Awaitable bidirectional lens between native Atomic Data and a platform connector. */
 export class AtomicLens<External> {
   private pending: Promise<unknown> = Promise.resolve();
-  constructor(private options: AtomicLensOptions<External>) {}
+  constructor(private options: AtomicLensOptions<External>) {
+    assertSubject(options.scope);
+    if (!options.entity) throw new Error('A lens requires an entity type');
+    if (options.identities.store !== options.store) {
+      throw new Error('Lens and identity map must use the same store');
+    }
+  }
 
   /** Handle a webhook or fetched record. Never writes back to the connector. */
   ingest(record: External): Promise<string> {

@@ -22,7 +22,7 @@ export interface IdentityScope {
 export class AtomicIdentityMap {
   private base: string;
   constructor(
-    private store: AtomicStore,
+    readonly store: AtomicStore,
     baseURL: string,
   ) {
     assertSubject(baseURL);

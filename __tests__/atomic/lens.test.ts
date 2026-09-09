@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   AtomicConnector,
+  AtomicLens,
+  AtomicLensOptions,
   AtomicIdentityMap,
   AtomicStore,
   ExternalId,
@@ -64,6 +66,25 @@ const input: FlatOrder = {
 };
 
 describe('Atomic Extract Entity lens', () => {
+  it('rejects mismatched stores and invalid scopes before performing connector I/O', () => {
+    const { store, ids, connector } = setup();
+    const options: AtomicLensOptions<FlatOrder> = {
+      store,
+      identities: ids,
+      connector,
+      scope: 'https://example.com/account',
+      entity: 'order',
+      read: () => ({}),
+      write: () => input,
+    };
+    expect(
+      () =>
+        new AtomicLens({ ...options, store: new AtomicStore(orderSchema()) }),
+    ).toThrow('same store');
+    expect(() => new AtomicLens({ ...options, scope: 'relative' })).toThrow();
+    expect(() => new AtomicLens({ ...options, entity: '' })).toThrow('entity');
+    expect(connector.create).not.toHaveBeenCalled();
+  });
   it('imports linked resources, updates both ways, preserves unmapped fields and restores identity', async () => {
     const first = setup();
     const subject = await first.lens.ingest(input);
