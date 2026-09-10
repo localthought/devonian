@@ -35,17 +35,21 @@ export interface Host {
 }
 
 export interface Change {
-  subject?: string;
-  number?: number;
-  local?: Projection;
-  remote?: Projection;
+  subject?: string | undefined;
+  number?: number | undefined;
+  local?: Projection | undefined;
+  remote?: Projection | undefined;
   desired: Projection;
 }
 export interface Preview {
   repository: string;
   revision: number;
   changes: Change[];
-  conflicts: Array<{ subject?: string; number?: number; fields: string[] }>;
+  conflicts: Array<{
+    subject?: string | undefined;
+    number?: number | undefined;
+    fields: string[];
+  }>;
 }
 
 const headers = {

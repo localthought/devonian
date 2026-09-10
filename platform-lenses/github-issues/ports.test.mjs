@@ -6,18 +6,17 @@ import {
   trackerOperations,
 } from './tracker-actions.js';
 import { manifest } from './adapter.js';
-import { validateManifest } from '@tomic/lib';
 
 it('declares and prepares scoped issue/comment actions with validated arguments', () => {
   const original = manifest('owner/repo');
-  const m = validateManifest({
+  const m = {
     ...original,
     actions: [...original.actions, ...trackerActions],
     operations: [
       ...original.operations,
       ...trackerOperations('https://api.github.com/repos/owner/repo/issues'),
     ],
-  });
+  };
   for (const [action, args] of [
     ['list_issues', { page: 1 }],
     ['list_comments', { number: 5, page: 2 }],

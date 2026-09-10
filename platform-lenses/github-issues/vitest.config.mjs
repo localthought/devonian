@@ -5,10 +5,10 @@ export default {
     alias: {
       devonian: process.env.DEVONIAN_PATH
         ? resolve(process.env.DEVONIAN_PATH, 'build/src/main.js')
-        : resolve('browser/data-browser/src/chunks/DevonianDemo/devonian.js'),
-      '@tomic/lib': resolve('browser/lib/src/index.ts'),
-      vitest: resolve('browser/node_modules/vitest/dist/index.js'),
+        : resolve('../../src/main.ts'),
+      '@tomic/lib': process.env.ATOMIC_LIB_PATH ?? '@tomic/lib',
+      vitest: process.env.VITEST_PATH ?? 'vitest',
     },
   },
-  test: { include: ['integrations/github-issues/devonian/*.test.*'] },
+  test: { include: ['platform-lenses/github-issues/*.test.*'] },
 };
