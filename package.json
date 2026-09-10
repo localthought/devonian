@@ -13,7 +13,10 @@
     "./platform-lenses/github-issues/ports": "./platform-lenses/github-issues/ports.mjs",
     "./platform-lenses/github-issues/proxy": "./platform-lenses/github-issues/proxy.mjs",
     "./platform-lenses/github-issues/adapter": "./platform-lenses/github-issues/adapter.ts",
-    "./platform-lenses/github-issues/tracker-actions": "./platform-lenses/github-issues/tracker-actions.ts"
+    "./platform-lenses/github-issues/tracker-actions": "./platform-lenses/github-issues/tracker-actions.ts",
+    "./platform-lenses/google-calendar": "./platform-lenses/google-calendar/index.ts",
+    "./platform-lenses/google-calendar/sync": "./platform-lenses/google-calendar/sync.ts",
+    "./platform-lenses/google-calendar/recurrence": "./platform-lenses/google-calendar/recurrence.ts"
   },
   "files": [
     "docs",
