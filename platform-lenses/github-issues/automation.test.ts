@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { eventAutomationSource } from '../../browser/data-browser/src/chunks/PluginRuns/integrationAutomation';
+import { eventAutomationSource } from '@integration-host/integration-automation';
 it('wires arbitrary events to a sandbox script without prescribing an action', async () => {
   const source = eventAutomationSource({
     id: 'enrollment',
