@@ -7,12 +7,28 @@
     "node": ">= 22.11 < 23"
   },
   "exports": {
-    ".": "./build/src/main.js"
+    ".": "./src/main.ts",
+    "./platform-lenses/github-issues": "./platform-lenses/github-issues/index.mjs",
+    "./platform-lenses/github-issues/bridge": "./platform-lenses/github-issues/bridge.mjs",
+    "./platform-lenses/github-issues/ports": "./platform-lenses/github-issues/ports.mjs",
+    "./platform-lenses/github-issues/proxy": "./platform-lenses/github-issues/proxy.mjs",
+    "./platform-lenses/github-issues/adapter": "./platform-lenses/github-issues/adapter.ts",
+    "./platform-lenses/github-issues/tracker-actions": "./platform-lenses/github-issues/tracker-actions.ts",
+    "./platform-lenses/github-issues/plugin": "./platform-lenses/github-issues/plugin.ts",
+    "./platform-lenses/github-issues/plugin.js": "./platform-lenses/github-issues/plugin.js",
+    "./platform-lenses/github-issues/atomic": "./platform-lenses/github-issues/atomic.ts",
+    "./platform-lenses/google-calendar": "./platform-lenses/google-calendar/index.ts",
+    "./platform-lenses/google-calendar/sync": "./platform-lenses/google-calendar/sync.ts",
+    "./platform-lenses/google-calendar/recurrence": "./platform-lenses/google-calendar/recurrence.ts",
+    "./platform-lenses/atomic-integrations": "./platform-lenses/atomic-integrations/index.ts",
+    "./platform-lenses/atomic-integrations/*": "./platform-lenses/atomic-integrations/*"
   },
   "files": [
     "docs",
     "build",
-    "vocab"
+    "vocab",
+    "platform-lenses",
+    "src"
   ],
   "devDependencies": {
     "@automerge/automerge-repo-network-broadcastchannel": "^2.0.0",
@@ -20,6 +36,7 @@
     "@eslint/js": "~9.17",
     "@types/eslint__js": "~8.42",
     "@types/node": "~20",
+    "@tomic/lib": "^0.40.0",
     "@typescript-eslint/parser": "~8.19",
     "@vitest/coverage-v8": "^3.0.8",
     "@vitest/eslint-plugin": "~1.1",
@@ -54,9 +71,12 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@automerge/automerge-repo": "^2.0.0",
-    "@tomic/lib": "^0.40.0",
+    "fast-json-stable-stringify": "^2.1.0",
     "effect": "^3.16.0",
     "tslib": "~2.8"
+  },
+  "peerDependencies": {
+    "@tomic/lib": ">=0.40.0"
   },
   "volta": {
     "node": "22.12.0"

@@ -1,0 +1,22 @@
+{
+  "name": "@localthought/atomic-integrations",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "exports": {
+    "./oauth-providers.json": "./oauth-providers.json",
+    ".": "./index.ts",
+    "./clockify": "./clockify/plugin.ts",
+    "./clockify/plugin.js": "./clockify/plugin.js",
+    "./github-issues": "../github-issues/plugin.ts",
+    "./github-issues/plugin.js": "../github-issues/plugin.js",
+    "./notion": "./notion/plugin.ts",
+    "./notion/plugin.js": "./notion/plugin.js",
+    "./registry": "./index.ts"
+  },
+  "peerDependencies": {
+    "@tomic/lib": ">=0.40.0",
+    "@tomic/react": ">=0.40.0",
+    "react": ">=18"
+  }
+}
