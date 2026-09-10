@@ -7,7 +7,7 @@
     "node": ">= 22.11 < 23"
   },
   "exports": {
-    ".": "./build/src/main.js",
+    ".": "./src/main.ts",
     "./platform-lenses/github-issues": "./platform-lenses/github-issues/index.mjs",
     "./platform-lenses/github-issues/bridge": "./platform-lenses/github-issues/bridge.mjs",
     "./platform-lenses/github-issues/ports": "./platform-lenses/github-issues/ports.mjs",
