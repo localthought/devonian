@@ -34,9 +34,11 @@ describe('GitHub package', () => {
       ],
       { encoding: 'utf8' },
     );
-    expect(await readFile(join(import.meta.dirname, 'plugin.js'), 'utf8')).toBe(
-      built,
-    );
+    const withoutSourcePaths = (value: string) =>
+      value.replace(/^\/\/ .*\.(?:ts|js)$/gm, '// generated source');
+    expect(
+      withoutSourcePaths(await readFile(join(import.meta.dirname, 'plugin.js'), 'utf8')),
+    ).toBe(withoutSourcePaths(built));
   });
   it('reads every page and excludes pull requests', async () => {
     const issues = Array.from({ length: 101 }, (_, i) => issue(i + 1));
@@ -81,7 +83,7 @@ it('keeps the sandbox action manifest fixture current', async () => {
   expect(
     JSON.parse(
       await readFile(
-        'integrations/github-issues/manifest.fixture.json',
+        join(import.meta.dirname, 'manifest.fixture.json'),
         'utf8',
       ),
     ),

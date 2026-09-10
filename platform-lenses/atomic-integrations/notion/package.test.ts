@@ -1,6 +1,8 @@
 import { it, expect } from 'vitest';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { manifest } from './model.js';
 import { validateManifest } from '@integration-host/plugin-manifest';
 import { install } from './atomic.js';
@@ -18,29 +20,34 @@ it('rejects a missing provider before touching the store or credentials', async 
 });
 it('ships the reproducible bundle that runtime tests execute', () => {
   const built = execFileSync(
-    process.env.ESBUILD_BIN ?? 'esbuild',
+    process.env.ESBUILD_BIN ??
+      (existsSync('./browser/node_modules/.bin/esbuild')
+        ? './browser/node_modules/.bin/esbuild'
+        : './browser/node_modules/.pnpm/node_modules/.bin/esbuild'),
     [
-      'platform-lenses/atomic-integrations/notion/plugin.ts',
+      join(import.meta.dirname, 'plugin.ts'),
       '--bundle',
       '--format=esm',
       '--platform=neutral',
       '--target=es2022',
+      `--alias:@integration-host/import-records=${join(process.cwd(), 'browser/lib/src/import-records.ts')}`,
+      `--alias:@integration-host/plugin-reconcile=${join(process.cwd(), 'browser/lib/src/plugin-reconcile.ts')}`,
+      `--alias:@integration-host/plugin-connection=${join(process.cwd(), 'browser/lib/src/plugin-connection.ts')}`,
     ],
     { encoding: 'utf8' },
   );
+  const withoutSourcePaths = (value: string) =>
+    value.replace(/^\/\/ .*\.(?:ts|js)$/gm, '// generated source');
   expect(
-    readFileSync(
-      'platform-lenses/atomic-integrations/notion/plugin.js',
-      'utf8',
-    ),
-  ).toBe(built);
+    withoutSourcePaths(readFileSync(join(import.meta.dirname, 'plugin.js'), 'utf8')),
+  ).toBe(withoutSourcePaths(built));
 });
 it('declares POST queries as reads and row updates as journaled writes', () => {
   const m = validateManifest(manifest('11111111-1111-1111-1111-111111111111'));
   expect(
     JSON.parse(
       readFileSync(
-        'platform-lenses/atomic-integrations/notion/manifest.fixture.json',
+        join(import.meta.dirname, 'manifest.fixture.json'),
         'utf8',
       ),
     ),
