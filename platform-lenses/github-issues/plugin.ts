@@ -1,3 +1,4 @@
+import { issuePatch } from './lens/index.js';
 import {
   claimImportIdentity,
   IMPORT_LOCAL_ID,
@@ -254,17 +255,7 @@ export async function run(input: Input): Promise<unknown> {
       project(created);
       cursor = { ...cursor, number: created.number, stage: 'patch' };
     } else if (cursor.stage === 'patch') {
-      const patch: Record<string, unknown> = {};
-      if (change.remote && change.remote.title !== desired.title)
-        patch.title = desired.title;
-      if (change.remote && change.remote.body !== desired.body)
-        patch.body = desired.body;
-      if (
-        (!change.remote && desired.status === 'Done') ||
-        (change.remote &&
-          (change.remote.status === 'Done') !== (desired.status === 'Done'))
-      )
-        patch.state = desired.status === 'Done' ? 'closed' : 'open';
+      const patch = issuePatch(desired, change.remote);
       const next = { ...cursor, stage: 'labels' };
       if (Object.keys(patch).length)
         return external(

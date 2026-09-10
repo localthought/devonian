@@ -110,3 +110,15 @@ pnpm build:release
 pnpm publish
 ```
 The native resource API accepts HTTP(S) and DID identities, including AtomicServer `did:ad:` resources, properties and links. Identity allocation still uses an HTTP(S) base; bind existing DID resources explicitly. See [Atomic Data API](docs/atomic-data.md).
+
+### Passive platform lenses
+
+Provider transformations live in `platform-lenses/github-issues/lens/` and
+`platform-lenses/google-calendar/lens/`, exposed through the corresponding
+`devonian/platform-lenses/<platform>/lens` package entry points. These functions
+consume supplied data and return projections or patches; they do not fetch,
+subscribe, persist, or checkpoint. Their surrounding platform modules retain
+existing runtime behavior and compatibility entry points.
+
+See [the platform lens boundaries](docs/atomic-data.md#passive-platform-lenses)
+for the forward and reverse mappings and their scope.

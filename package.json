@@ -19,7 +19,9 @@
     "./platform-lenses/github-issues/atomic": "./platform-lenses/github-issues/atomic.ts",
     "./platform-lenses/google-calendar": "./platform-lenses/google-calendar/index.ts",
     "./platform-lenses/google-calendar/sync": "./platform-lenses/google-calendar/sync.ts",
-    "./platform-lenses/google-calendar/recurrence": "./platform-lenses/google-calendar/recurrence.ts"
+    "./platform-lenses/google-calendar/recurrence": "./platform-lenses/google-calendar/recurrence.ts",
+    "./platform-lenses/github-issues/lens": "./platform-lenses/github-issues/lens/index.ts",
+    "./platform-lenses/google-calendar/lens": "./platform-lenses/google-calendar/lens/index.ts"
   },
   "files": [
     "docs",

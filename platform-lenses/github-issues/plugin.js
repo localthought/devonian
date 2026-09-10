@@ -28,9 +28,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// browser/node_modules/.pnpm/fast-json-stable-stringify@2.1.0/node_modules/fast-json-stable-stringify/index.js
+// ../../localthought/devonian/node_modules/.pnpm/fast-json-stable-stringify@2.1.0/node_modules/fast-json-stable-stringify/index.js
 var require_fast_json_stable_stringify = __commonJS({
-  "browser/node_modules/.pnpm/fast-json-stable-stringify@2.1.0/node_modules/fast-json-stable-stringify/index.js"(exports, module) {
+  "../../localthought/devonian/node_modules/.pnpm/fast-json-stable-stringify@2.1.0/node_modules/fast-json-stable-stringify/index.js"(exports, module) {
     "use strict";
     module.exports = function(data, opts) {
       if (!opts) opts = {};
@@ -84,6 +84,33 @@ var require_fast_json_stable_stringify = __commonJS({
   }
 });
 
+// ../../localthought/devonian/platform-lenses/github-issues/lens/index.ts
+function project(issue) {
+  if (!Number.isSafeInteger(issue.number) || issue.number <= 0 || typeof issue.title !== "string" || !(issue.body === null || typeof issue.body === "string") || !["open", "closed"].includes(issue.state) || !Array.isArray(issue.labels))
+    throw new Error("GitHub returned an invalid issue");
+  return {
+    title: issue.title,
+    body: issue.body ?? "",
+    status: issue.state === "closed" ? "Done" : issue.labels.some(
+      (l) => (typeof l === "string" ? l : l.name).toLowerCase() === "atomic:doing"
+    ) ? "Doing" : "Todo"
+  };
+}
+function validate(value) {
+  if (typeof value.title !== "string" || !value.title.trim() || typeof value.body !== "string" || !["Todo", "Doing", "Done"].includes(value.status))
+    throw new Error(
+      "Cards require a title, Markdown body and exactly one Todo/Doing/Done status"
+    );
+}
+function issuePatch(desired, previous) {
+  const patch = {};
+  if (previous && previous.title !== desired.title) patch.title = desired.title;
+  if (previous && previous.body !== desired.body) patch.body = desired.body;
+  if (!previous && desired.status === "Done" || previous && previous.status === "Done" !== (desired.status === "Done"))
+    patch.state = desired.status === "Done" ? "closed" : "open";
+  return patch;
+}
+
 // browser/lib/src/import-records.ts
 var IMPORT_LOCAL_ID = "https://atomicdata.dev/properties/localId";
 var PARENT = "https://atomicdata.dev/properties/parent";
@@ -100,7 +127,7 @@ function claimImportIdentity(host, parent2, sourceId, subject) {
   return { [IMPORT_LOCAL_ID]: sourceId };
 }
 
-// browser/lib/src/plugin-reconcile.ts
+// ../../localthought/devonian/src/reconcileRecord.ts
 var import_fast_json_stable_stringify = __toESM(require_fast_json_stable_stringify(), 1);
 var equal = (a, b) => (0, import_fast_json_stable_stringify.default)(a) === (0, import_fast_json_stable_stringify.default)(b);
 function reconcileRecord(base, local, remote) {
@@ -157,7 +184,7 @@ function reconcileRecord(base, local, remote) {
   return result;
 }
 
-// integrations/github-issues/adapter.ts
+// ../../localthought/devonian/platform-lenses/github-issues/adapter.ts
 var headers = {
   Accept: "application/vnd.github+json",
   "User-Agent": "Atomic-GitHub-Issues-Pilot",
@@ -165,23 +192,6 @@ var headers = {
   Authorization: "secret:github",
   "Content-Type": "application/json"
 };
-function project(issue) {
-  if (!Number.isSafeInteger(issue.number) || issue.number <= 0 || typeof issue.title !== "string" || !(issue.body === null || typeof issue.body === "string") || !["open", "closed"].includes(issue.state) || !Array.isArray(issue.labels))
-    throw new Error("GitHub returned an invalid issue");
-  return {
-    title: issue.title,
-    body: issue.body ?? "",
-    status: issue.state === "closed" ? "Done" : issue.labels.some(
-      (l) => (typeof l === "string" ? l : l.name).toLowerCase() === "atomic:doing"
-    ) ? "Doing" : "Todo"
-  };
-}
-function validate(value) {
-  if (typeof value.title !== "string" || !value.title.trim() || typeof value.body !== "string" || !["Todo", "Doing", "Done"].includes(value.status))
-    throw new Error(
-      "Cards require a title, Markdown body and exactly one Todo/Doing/Done status"
-    );
-}
 function endpoint(repository) {
   if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository) || repository.split("/").some((p) => p === "." || p === ".."))
     throw new Error("Repository must be owner/name");
@@ -301,7 +311,7 @@ async function preview(host, repository) {
   return result;
 }
 
-// integrations/github-issues/plugin.ts
+// ../../localthought/devonian/platform-lenses/github-issues/plugin.ts
 var parent = "https://atomicdata.dev/properties/parent";
 var isA = "https://atomicdata.dev/properties/isA";
 var name = "https://atomicdata.dev/properties/name";
@@ -456,13 +466,7 @@ async function run(input) {
       project(created);
       cursor = { ...cursor, number: created.number, stage: "patch" };
     } else if (cursor.stage === "patch") {
-      const patch = {};
-      if (change.remote && change.remote.title !== desired.title)
-        patch.title = desired.title;
-      if (change.remote && change.remote.body !== desired.body)
-        patch.body = desired.body;
-      if (!change.remote && desired.status === "Done" || change.remote && change.remote.status === "Done" !== (desired.status === "Done"))
-        patch.state = desired.status === "Done" ? "closed" : "open";
+      const patch = issuePatch(desired, change.remote);
       const next = { ...cursor, stage: "labels" };
       if (Object.keys(patch).length)
         return external(
