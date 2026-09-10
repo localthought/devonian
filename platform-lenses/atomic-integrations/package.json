@@ -6,7 +6,9 @@
   "exports": {
     ".": "./index.ts",
     "./clockify": "./clockify/plugin.ts",
+    "./clockify/plugin.js": "./clockify/plugin.js",
     "./notion": "./notion/plugin.ts",
+    "./notion/plugin.js": "./notion/plugin.js",
     "./registry": "./index.ts"
   },
   "peerDependencies": {
