@@ -7,12 +7,14 @@
     "node": ">= 22.11 < 23"
   },
   "exports": {
-    ".": "./build/src/main.js"
+    ".": "./build/src/main.js",
+    "./platform-lenses/atomic-integrations": "./platform-lenses/atomic-integrations/index.ts"
   },
   "files": [
     "docs",
     "build",
-    "vocab"
+    "vocab",
+    "platform-lenses"
   ],
   "devDependencies": {
     "@automerge/automerge-repo-network-broadcastchannel": "^2.0.0",
