@@ -1,11 +1,6 @@
 import { reconcileRecord } from '../../src/reconcileRecord.js';
 
-const p = {
-  title: 'https://atomicdata.dev/properties/name',
-  body: 'https://atomicdata.dev/task/v1/body',
-  status: 'https://atomicdata.dev/task/v1/status',
-};
-const tag = 'https://atomicdata.dev/task/v1/';
+import { properties, value as resourceValue, propertiesByField as p } from './lens/resources.mjs';
 const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const copy = value => structuredClone(value);
 
@@ -54,26 +49,10 @@ export class Bridge {
     });
   }
   properties(value) {
-    return {
-      [p.body]: value.body,
-      ...(value.title === undefined
-        ? {}
-        : {
-            [p.title]: value.title,
-            [p.status]: [`${tag}${value.status.toLowerCase()}`],
-          }),
-    };
+    return properties(value);
   }
   value(resource, entity) {
-    if (entity !== 'issue') return { body: resource[p.body] };
-    const status = {
-      [`${tag}todo`]: 'Todo',
-      [`${tag}doing`]: 'Doing',
-      [`${tag}done`]: 'Done',
-    }[resource[p.status]?.[0]];
-    if (!status || resource[p.status].length !== 1)
-      throw new Error('Unsupported task status');
-    return { title: resource[p.title], body: resource[p.body], status };
+    return resourceValue(resource, entity);
   }
   lens(side, entity, operation, metadata) {
     const port = this[side],

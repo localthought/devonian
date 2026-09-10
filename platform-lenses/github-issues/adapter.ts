@@ -9,24 +9,12 @@ import type {
   ExternalReceipt,
 } from './types.js';
 
-export type Status = 'Todo' | 'Doing' | 'Done';
-export type Projection = {
-  title: string;
-  body: string;
-  status: Status;
-};
+import { project, validate, type Projection, type Issue } from './lens/index.js';
+export { project, type Status, type Projection, type Issue } from './lens/index.js';
 export interface Card {
   subject: string;
   number?: number;
   value: Projection;
-}
-export interface Issue {
-  number: number;
-  title: string;
-  body: string | null;
-  state: 'open' | 'closed';
-  labels: Array<string | { name: string }>;
-  pull_request?: unknown;
 }
 export interface Host {
   read(intent: ExternalIntent): Promise<ExternalReceipt>;
@@ -55,42 +43,6 @@ const headers = {
   Authorization: 'secret:github',
   'Content-Type': 'application/json',
 };
-export function project(issue: Issue): Projection {
-  if (
-    !Number.isSafeInteger(issue.number) ||
-    issue.number <= 0 ||
-    typeof issue.title !== 'string' ||
-    !(issue.body === null || typeof issue.body === 'string') ||
-    !['open', 'closed'].includes(issue.state) ||
-    !Array.isArray(issue.labels)
-  )
-    throw new Error('GitHub returned an invalid issue');
-  return {
-    title: issue.title,
-    body: issue.body ?? '',
-    status:
-      issue.state === 'closed'
-        ? 'Done'
-        : issue.labels.some(
-              l =>
-                (typeof l === 'string' ? l : l.name).toLowerCase() ===
-                'atomic:doing',
-            )
-          ? 'Doing'
-          : 'Todo',
-  };
-}
-function validate(value: Projection) {
-  if (
-    typeof value.title !== 'string' ||
-    !value.title.trim() ||
-    typeof value.body !== 'string' ||
-    !['Todo', 'Doing', 'Done'].includes(value.status)
-  )
-    throw new Error(
-      'Cards require a title, Markdown body and exactly one Todo/Doing/Done status',
-    );
-}
 export function endpoint(repository: string): string {
   if (
     !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository) ||

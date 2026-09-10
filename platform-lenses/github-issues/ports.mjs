@@ -1,4 +1,4 @@
-import { project } from './adapter.js';
+import { project, issueFields } from './lens/index.js';
 import { core, dataBrowser } from '@tomic/lib';
 
 export const digest = async value =>
@@ -128,9 +128,7 @@ export class GitHubPort {
       'update_issue',
       {
         number: id,
-        title: value.title,
-        body: value.body,
-        state: value.status === 'Done' ? 'closed' : 'open',
+        ...issueFields(value),
       },
       `${key}:fields`,
     );

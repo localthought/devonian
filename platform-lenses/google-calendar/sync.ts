@@ -1,3 +1,5 @@
+import { canonical, planCalendarValues } from './lens/edit.js';
+export { canonical } from './lens/edit.js';
 // @wc-ignore-file
 const IMPORT_BASELINE = 'https://atomicdata.dev/properties/importBaseline';
 const IMPORT_LOCAL_ID = 'https://atomicdata.dev/properties/localId';
@@ -27,15 +29,6 @@ export interface CalendarEdit {
   patch: Values;
   observed: Values;
   acknowledged: Values;
-}
-export function canonical(value: unknown): string {
-  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
-  if (value && typeof value === 'object')
-    return `{${Object.entries(value)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([key, v]) => `${JSON.stringify(key)}:${canonical(v)}`)
-      .join(',')}}`;
-  return JSON.stringify(value) ?? 'undefined';
 }
 const same = (a: unknown, b: unknown) => canonical(a) === canonical(b);
 function object(value: unknown): Values {
@@ -76,37 +69,6 @@ export function eventPath(row: Values, config: Config): string | undefined {
     return;
   return `/calendar/v3/calendars/${encodeURIComponent(id[2])}/events/${encodeURIComponent(id[3])}`;
 }
-function validateTimes(start: unknown, end: unknown) {
-  const a = object(start),
-    b = object(end);
-  const allDay = typeof a.date === 'string';
-  const parse = (v: Values) => {
-    if (allDay) {
-      if (
-        typeof v.date !== 'string' ||
-        v.dateTime !== undefined ||
-        !/^\d{4}-\d{2}-\d{2}$/.test(v.date)
-      )
-        throw new Error('Invalid all-day event dates');
-      const time = Date.parse(`${v.date}T00:00:00Z`);
-      if (
-        !Number.isFinite(time) ||
-        new Date(time).toISOString().slice(0, 10) !== v.date
-      )
-        throw new Error('Invalid all-day event dates');
-      return time;
-    }
-    if (
-      typeof v.dateTime !== 'string' ||
-      v.date !== undefined ||
-      !/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/.test(v.dateTime) ||
-      !Number.isFinite(Date.parse(v.dateTime))
-    )
-      throw new Error('Event times need an explicit UTC offset');
-    return Date.parse(v.dateTime);
-  };
-  if (parse(b) <= parse(a)) throw new Error('Event end must follow its start');
-}
 /** Three-way merge only the supported provider fields; no full event replacement. */
 export function planCalendarEdit(
   subject: string,
@@ -117,44 +79,11 @@ export function planCalendarEdit(
   const path = eventPath(row, config);
   if (!path) return;
   const baseline = object(object(row[IMPORT_BASELINE]).values);
-  const patch: Values = {},
-    observed: Values = {},
-    acknowledged: Values = {};
-  for (const field of ['summary', 'description', 'location', 'start', 'end']) {
-    const properties =
-      field === 'summary'
-        ? [NAME, config.properties.summary].filter(Boolean)
-        : [config.properties[field]].filter(Boolean);
-    const changed = properties.filter(p => !same(row[p], baseline[p]));
-    if (!changed.length) continue;
-    const local = row[changed[0]] ?? '';
-    if (changed.some(p => !same(row[p] ?? '', local)))
-      throw new Error(
-        'Title and Summary disagree; make them match before syncing',
-      );
-    if (
-      ['summary', 'description', 'location'].includes(field) &&
-      typeof local !== 'string'
-    )
-      throw new Error(`Calendar ${field} must be text`);
-    if (
-      !same(remote[field] ?? '', local) &&
-      changed.some(p => !same(remote[field] ?? '', baseline[p] ?? ''))
-    )
-      throw new Error(
-        `Calendar conflict in ${field}; fetch and resolve the source/local conflict first`,
-      );
-    for (const p of properties) {
-      observed[p] = row[p];
-      acknowledged[p] = local;
-    }
-    if (!same(remote[field] ?? '', local)) patch[field] = local;
-  }
-  if (!Object.keys(acknowledged).length) return;
+  const values = planCalendarValues(row, baseline, config.properties, remote);
+  if (!values) return;
+  const { patch, observed, acknowledged } = values;
   if (remote.status === 'cancelled')
     throw new Error('This event was cancelled in Google');
-  if (patch.start || patch.end)
-    validateTimes(patch.start ?? remote.start, patch.end ?? remote.end);
   if (typeof remote.etag !== 'string' || !remote.etag)
     throw new Error('Google did not return an event ETag');
   observed[IMPORT_LOCAL_ID] = row[IMPORT_LOCAL_ID];

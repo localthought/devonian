@@ -107,3 +107,34 @@ The behavioral tests cover distinct identical records, scoped identities, round-
 Specification references: [JSON-AD](https://docs.atomicdata.dev/core/json-ad.html), [Atomic Schema](https://docs.atomicdata.dev/schema/intro.html), [Atomic Commits](https://docs.atomicdata.dev/commits/intro.html), [TypeScript SDK](https://atomicdata-dev.github.io/atomic-data-browser/docs/modules/_tomic_lib.html).
 
 DID identifiers (including AtomicServer `did:ad:` base64 identities) are accepted as resource subjects, property keys, classes, links and connector scopes. Identifiers are preserved exactly; validation does not resolve DIDs or verify signatures. Identity allocator bases still require HTTP(S) URLs because the allocator appends child paths. Bind existing DID resources explicitly before ingesting their external records.
+
+## Passive platform lenses
+
+The `platform-lenses/github-issues/lens/` and
+`platform-lenses/google-calendar/lens/` directories contain passive mappings.
+A caller supplies resource data; these modules neither access datasets nor own
+credentials, subscriptions, identity lookups, or durable synchronization state.
+
+- GitHub's `project(issue)` maps issue fields to title/body/status.
+  `unproject(value, previousIssue)` maps back while preserving the issue number,
+  unrelated fields, and labels other than `atomic:doing`. The reverse mapping
+  normalizes that workflow label to the requested status. `issueFields` and
+  `issuePatch` support the existing runtime's field writes. The bridge's Atomic
+  property mapping for issues and comments lives in `lens/resources.mjs`.
+- Calendar's `calendarProjection` and `calendarRecurrenceProjection` add Atomic
+  display/recurrence properties while retaining provider fields.
+  `planCalendarValues(row, baseline, properties, remote)` computes reverse
+  patches for summary, description, location, start, and end from supplied data.
+  It retains the existing field conflict and interval validation. It does not
+  write recurrence changes or replace the complete Google event. Empty strings
+  explicitly clear supported text fields.
+
+Import these through `devonian/platform-lenses/github-issues/lens` or
+`devonian/platform-lenses/google-calendar/lens`. Calendar's projection helpers
+still require the consuming application's compatible `@tomic/lib` calendar
+helpers. Previous adapter, projection, recurrence, types, and sync entry points
+remain available.
+
+Transport, dataset membership checks, preview workflows, ETags, and checkpointing
+remain in the surrounding platform modules. This extraction does not introduce
+an event handler, dataset abstraction, Loro replay, or distributed convergence.
