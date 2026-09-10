@@ -11,6 +11,9 @@
     "api_headers": { "Notion-Version": "2026-03-11" },
     "token_auth": "basic",
     "token_encoding": "json",
+    "authorization_scheme": "Bearer",
+    "access_token_pointer": "/access_token",
+    "refresh_token_pointer": "/refresh_token",
     "account": {
       "id_pointer": "/workspace_id",
       "name_pointer": "/workspace_name",
