@@ -1,6 +1,7 @@
 import { ConnectClockify } from './ui/ConnectClockify';
 import { ConnectGitHub } from './ui/ConnectGitHub';
 import { ConnectNotion } from './ui/ConnectNotion';
+import { ClockifyUpgrade } from './ui/ClockifyUpgrade';
 import { googleCalendarIntegration } from './ui/GoogleCalendar';
 
 /** Host UI registry: the consumer supplies the peer aliases used by these components. */
