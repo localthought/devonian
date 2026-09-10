@@ -1,6 +1,6 @@
 // @wc-ignore-file
-const IMPORT_BASELINE = 'https://atomicdata.dev/properties/import-baseline';
-const IMPORT_LOCAL_ID = 'https://atomicdata.dev/properties/import-local-id';
+const IMPORT_BASELINE = 'https://atomicdata.dev/properties/importBaseline';
+const IMPORT_LOCAL_ID = 'https://atomicdata.dev/properties/localId';
 export interface Config {
   platform: string;
   destinations: Record<string, { table: string; rowClass: string }>;
