@@ -1,6 +1,7 @@
 export interface CalendarRange { start: string; end: string; series?: boolean }
 export const googleCalendarLens = {
   platform: 'google-calendar',
+  defaultConstants: { calendarId: 'primary' },
   isFor(platform: string) { return platform === 'google-calendar'; },
   query: calendarImportQuery,
 };
