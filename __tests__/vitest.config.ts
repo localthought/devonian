@@ -14,6 +14,12 @@ export default defineConfig({
       'platform-lenses/atomic-integrations/clockify/atomic.test.ts',
       'platform-lenses/atomic-integrations/notion/atomic.live.test.ts',
       'platform-lenses/atomic-integrations/notion/package.test.ts',
+      // The GitHub package tests use the same Atomic host contract and remain
+      // packaged beside the lens for the consumer test suite.
+      'platform-lenses/github-issues/adapter.test.ts',
+      'platform-lenses/github-issues/atomic.live.test.ts',
+      'platform-lenses/github-issues/automation.test.ts',
+      'platform-lenses/github-issues/github.live.test.ts',
     ],
     coverage: {
       provider: 'v8',

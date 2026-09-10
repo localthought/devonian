@@ -1,13 +1,16 @@
 import { ConnectClockify } from './ui/ConnectClockify';
+import { ConnectGitHub } from './ui/ConnectGitHub';
 import { ConnectNotion } from './ui/ConnectNotion';
 
 /** Host UI registry: the consumer supplies the peer aliases used by these components. */
 export const integrationRegistry = [
+  { id: 'github-issues', label: 'GitHub issues', Component: ConnectGitHub },
   { id: 'clockify', label: 'Clockify', Component: ConnectClockify },
   { id: 'notion', label: 'Notion', Component: ConnectNotion },
 ] as const;
 
 export { ConnectClockify } from './ui/ConnectClockify';
+export { ConnectGitHub } from './ui/ConnectGitHub';
 export { ClockifyUpgrade } from './ui/ClockifyUpgrade';
 export { clockifyUpgrade } from './ui/clockifyUpgradeSource';
 export { ConnectNotion } from './ui/ConnectNotion';

@@ -187,5 +187,4 @@ export function trackerAction(
         state: args.state,
       });
   }
-  return undefined;
 }
