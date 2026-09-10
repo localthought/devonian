@@ -27,21 +27,5 @@ export function calendarImportQuery(range: CalendarRange) {
     values.orderBy = null;
   }
   else { values.timeMin = `${range.start}T00:00:00Z`; values.timeMax = `${range.end}T00:00:00Z`; values.orderBy = 'startTime'; }
-  return {
-    query_overrides: [{ path: '/calendars/{calendarId}/events', values }],
-    schema_property_overrides: [{
-      schema: 'event',
-      properties: {
-        recurrence: { type: 'array', items: { type: 'string' } },
-        originalStartTime: {
-          type: 'object',
-          properties: {
-            date: { type: 'string', format: 'date' },
-            dateTime: { type: 'string', format: 'date-time' },
-            timeZone: { type: 'string' },
-          },
-        },
-      },
-    }],
-  };
+  return { query_overrides: [{ path: '/calendars/{calendarId}/events', values }] };
 }

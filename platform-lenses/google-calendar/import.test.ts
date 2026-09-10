@@ -11,13 +11,11 @@ describe('calendar import selection', () => {
     });
   });
 
-  it('removes bounds for retained series and adds recurrence fields', () => {
+  it('removes bounds for retained series', () => {
     const selection = calendarImportQuery({ start: '2026-03-01', end: '2026-04-01', series: true });
     expect(selection.query_overrides[0].values).toMatchObject({
       singleEvents: false, showDeleted: true, timeMin: null, timeMax: null, orderBy: null,
     });
-    expect(selection.schema_property_overrides[0].properties).toHaveProperty('recurrence');
-    expect(selection.schema_property_overrides[0].properties).toHaveProperty('originalStartTime');
   });
 
   it('rejects impossible civil dates', () => {
