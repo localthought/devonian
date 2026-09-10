@@ -22,6 +22,6 @@
     "noImplicitThis": false,
     "strictNullChecks": true,
   },
-  "include": ["src", "__tests__", "examples", "platform-lenses/**/*.ts"],
+  "include": ["src", "__tests__", "examples"],
   "exclude": ["docs"]
 }
