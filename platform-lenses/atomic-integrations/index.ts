@@ -11,6 +11,7 @@ export const integrationRegistry = [
 ] as const;
 export const externalIntegrationRegistry = [googleCalendarIntegration] as const;
 export { GoogleCalendarImportControls, GoogleCalendarSync, googleCalendarIntegration } from './ui/GoogleCalendar';
+export { externalIntegrationEvidence } from './evidence';
 
 export { ConnectClockify } from './ui/ConnectClockify';
 export { ConnectGitHub } from './ui/ConnectGitHub';
