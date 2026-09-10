@@ -17,7 +17,8 @@
     "./platform-lenses/google-calendar": "./platform-lenses/google-calendar/index.ts",
     "./platform-lenses/google-calendar/sync": "./platform-lenses/google-calendar/sync.ts",
     "./platform-lenses/google-calendar/recurrence": "./platform-lenses/google-calendar/recurrence.ts",
-    "./platform-lenses/atomic-integrations": "./platform-lenses/atomic-integrations/index.ts"
+    "./platform-lenses/atomic-integrations": "./platform-lenses/atomic-integrations/index.ts",
+    "./platform-lenses/atomic-integrations/*": "./platform-lenses/atomic-integrations/*"
   },
   "files": [
     "docs",
