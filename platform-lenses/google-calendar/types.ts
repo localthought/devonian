@@ -1,6 +1,5 @@
-import type { Datatype } from '@tomic/lib';
+import type { Datatype, JSONValue } from '@tomic/lib';
 
-export type JSONValue = null | boolean | number | string | JSONValue[] | { [key: string]: JSONValue };
 export interface Term {
   path: string;
   kind: 'class' | 'property';
@@ -22,4 +21,3 @@ export interface FetchedPlatform {
   ontology: { description: string; terms: Term[] };
   records: FetchedRecord[];
 }
-
