@@ -4,6 +4,7 @@
   "private": false,
   "type": "module",
   "exports": {
+    "./oauth-providers.json": "./oauth-providers.json",
     ".": "./index.ts",
     "./clockify": "./clockify/plugin.ts",
     "./clockify/plugin.js": "./clockify/plugin.js",
