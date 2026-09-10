@@ -5,7 +5,7 @@ import { googleCalendarIntegration } from './ui/GoogleCalendar';
 
 /** Host UI registry: the consumer supplies the peer aliases used by these components. */
 export const integrationRegistry = [
-  { id: 'github-issues', label: 'GitHub issues', Component: ConnectGitHub },
+  { id: 'github-issues', label: 'GitHub issues', Component: ConnectGitHub, catalogDirect: true },
   { id: 'clockify', label: 'Clockify', Component: ConnectClockify },
   { id: 'notion', label: 'Notion', Component: ConnectNotion },
 ] as const;
