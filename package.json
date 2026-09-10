@@ -19,7 +19,8 @@
     "docs",
     "build",
     "vocab",
-    "platform-lenses"
+    "platform-lenses",
+    "src"
   ],
   "devDependencies": {
     "@automerge/automerge-repo-network-broadcastchannel": "^2.0.0",
