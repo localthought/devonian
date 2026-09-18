@@ -11,16 +11,22 @@ importers:
       '@automerge/automerge-repo':
         specifier: ^2.0.0
         version: 2.0.0(supports-color@7.2.0)
-      '@tomic/lib':
-        specifier: ^0.40.0
-        version: 0.40.0
       effect:
         specifier: ^3.16.0
         version: 3.16.0
+      fast-json-stable-stringify:
+        specifier: ^2.1.0
+        version: 2.1.0
       tslib:
         specifier: ~2.8
         version: 2.8.1
+    peerDependencies:
+      '@tomic/lib':
+        specifier: '>=0.40.0'
     devDependencies:
+      '@tomic/lib':
+        specifier: ^0.40.0
+        version: 0.40.0
       '@automerge/automerge-repo-network-broadcastchannel':
         specifier: ^2.0.0
         version: 2.0.0(supports-color@7.2.0)

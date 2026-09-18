@@ -63,4 +63,27 @@ export default tseslint.config(
       },
     },
   },
+  {
+    files: ['platform-lenses/**/*.{js,mjs,ts}'],
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
+    languageOptions: {
+      parserOptions: {
+        project: null,
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        settings: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+    },
+  },
 );
