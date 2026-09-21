@@ -1,0 +1,52 @@
+name: Publish to npm
+
+# Publishes automatically whenever package.json's version on `main` is one
+# npm doesn't have yet — so a normal "bump the version in the PR, merge it"
+# is the whole release process; nobody needs to run `npm publish` by hand.
+# (This is exactly the gap that shipped devonian@0.6.0 with a stale build/:
+# a manual publish skipped `npm run build` first. `prepublishOnly` in
+# package.json now forces that build, and this workflow removes the manual
+# step entirely.)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+  workflow_dispatch: {}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+      - run: pnpm run prettier:check
+      - run: pnpm test
+      - name: Check whether this version is already on npm
+        id: version-check
+        run: |
+          local_version=$(node -p "require('./package.json').version")
+          published_version=$(npm view devonian version 2>/dev/null || echo "none")
+          echo "local version: $local_version; published version: $published_version"
+          if [ "$local_version" = "$published_version" ]; then
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          fi
+      # `npm publish` runs the package's own `prepublishOnly` (clean + build)
+      # first, so the tarball always matches the source at this commit.
+      - name: Publish
+        if: steps.version-check.outputs.should_publish == 'true'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

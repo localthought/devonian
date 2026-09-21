@@ -116,12 +116,22 @@ pnpm lint
 pnpm prettier
 pnpm typedoc
 git commit
-pnpm version patch
-git push
-git push --tags
-pnpm build:release
-pnpm publish
 ```
+
+## Publishing
+
+Publishing to npm is automated: bump `version` in `package.json` as part of a
+PR, and once that PR merges to `main`, [`.github/workflows/publish.yml`](.github/workflows/publish.yml)
+runs the test suite and publishes the new version — nobody runs `npm publish`
+by hand. `npm publish`'s own `prepublishOnly` script (`clean` then `build`)
+guarantees the published tarball's `build/` always matches the version being
+published, rather than whatever was left on disk from an earlier build.
+
+The workflow needs an `NPM_TOKEN` repository secret (an npm
+[automation token](https://docs.npmjs.com/creating-and-viewing-access-tokens)
+with publish rights on `devonian`) under **Settings → Secrets and variables →
+Actions**; without it, publishing fails with an auth error and the version
+bump merges but never reaches the registry.
 The native resource API accepts HTTP(S) and DID identities, including AtomicServer `did:ad:` resources, properties and links. Identity allocation still uses an HTTP(S) base; bind existing DID resources explicitly. See [Atomic Data API](docs/atomic-data.md).
 
 ### Passive platform lenses
