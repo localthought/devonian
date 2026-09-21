@@ -15,6 +15,17 @@ New integrations can use `AtomicStore`, `AtomicIdentityMap`, and `AtomicLens` wi
 
 See the [Atomic Data guide](docs/atomic-data.md) for the API, supported JSON-AD profile, persistence, connector contracts, and limitations. The [Atomic Extract Entity example](examples/AtomicExtractEntity.ts) maps flattened orders to linked Order and Customer resources. The original row API remains available; existing applications are not automatically migrated. Signed Atomic Commits and live Atomic Server transport are follow-up work.
 
+## Reflection engine (`devonian/reflect`)
+
+`devonian/reflect` is a generic, bidirectional reflection engine for two [`syncables`](https://github.com/localthought/syncables)-backed systems of record: it copies new records each way, keeps open/closed state in agreement, and reflects comments — all via a hidden origin marker embedded in the record body, so a copy is never mistaken for an original and never bounced back onward (echo suppression), and never duplicated across restarts (an `IdMap` plus a destination marker scan).
+
+It was extracted from [`localthought/reflector`](https://github.com/localthought/reflector)'s own reflect loop — reflector's live GitHub-issue-tracker bridge — per the decision recorded in [`localthought/atomic-plugins#6`](https://github.com/localthought/atomic-plugins/issues/6), so other hosts can reuse the same engine instead of each keeping their own copy:
+
+- `ReflectionEngine` takes two `ReflectionSide`s (each a `syncables` `ApiClient` the host already built — with its own OAuth/overlay/document handling — plus a `collectionUrl`/`idField`, a `comments(issueId)` factory, and a `setState(id, state)` writer) and an `IdMap`, and runs one `reflect()` pass. It has no notion of OpenAPI, overlays, or auth of its own — that stays with the host.
+- `ReflectionRunner` wraps any `{ reflect(): Promise<ReflectionSummary> }` with a background interval loop, an on-demand `reflectNow()` serialized with that loop, and a `status()` for a health/monitoring endpoint.
+- `marker.ts`'s `embedMarker`/`parseMarker`/`stripMarker` are namespaced (`<!-- <namespace>:origin ... -->`, defaulting to `devonian`) so a host with its own established wire format (e.g. reflector's `<!-- reflector:origin ... -->`, for backward compatibility with markers already in production) can keep it.
+- `IdMap`/`KvStore` (each with `InMemory*`/`File*` implementations) persist the id-map and the last-agreed state ledger a host needs across restarts.
+
 ## Local Identifiers and IdMaps
 What I think none of the other lens projects are currently offering is a built-in way to deal with the mapping of local identifiers.
 
