@@ -26,6 +26,8 @@ It was extracted from [`localthought/reflector`](https://github.com/localthought
 - `marker.ts`'s `embedMarker`/`parseMarker`/`stripMarker` are namespaced (`<!-- <namespace>:origin ... -->`, defaulting to `devonian`) so a host with its own established wire format (e.g. reflector's `<!-- reflector:origin ... -->`, for backward compatibility with markers already in production) can keep it.
 - `IdMap`/`KvStore` (each with `InMemory*`/`File*` implementations) persist the id-map and the last-agreed state ledger a host needs across restarts.
 
+Unlike this package's other exports, `devonian/reflect` resolves to **compiled JS** (`build/src/reflect/*.js`, with matching `.d.ts`), not raw `.ts` — its target consumer is a plain `tsc`-built Node app like reflector, not a bundler/`vite`-transformed one, so `npm run build` must have run (as it does before every publish) for this subpath to resolve.
+
 ## Local Identifiers and IdMaps
 What I think none of the other lens projects are currently offering is a built-in way to deal with the mapping of local identifiers.
 
