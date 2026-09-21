@@ -127,11 +127,15 @@ by hand. `npm publish`'s own `prepublishOnly` script (`clean` then `build`)
 guarantees the published tarball's `build/` always matches the version being
 published, rather than whatever was left on disk from an earlier build.
 
-The workflow needs an `NPM_TOKEN` repository secret (an npm
-[automation token](https://docs.npmjs.com/creating-and-viewing-access-tokens)
-with publish rights on `devonian`) under **Settings → Secrets and variables →
-Actions**; without it, publishing fails with an auth error and the version
-bump merges but never reaches the registry.
+Auth is npm [Trusted Publishing](https://docs.npmjs.com/trusted-publishers)
+(OIDC) rather than a stored token: the package's Settings → Trusted Publisher
+page on npmjs.com is configured to trust this exact repo and workflow
+filename (`publish.yml`), and the workflow's `id-token: write` permission
+lets GitHub Actions mint a short-lived, run-scoped publish credential — there
+is no long-lived secret to rotate or leak. If that trusted-publisher
+configuration is ever missing or points at the wrong workflow, publishing
+fails with an auth error and the version bump merges but never reaches the
+registry.
 The native resource API accepts HTTP(S) and DID identities, including AtomicServer `did:ad:` resources, properties and links. Identity allocation still uses an HTTP(S) base; bind existing DID resources explicitly. See [Atomic Data API](docs/atomic-data.md).
 
 ### Passive platform lenses
